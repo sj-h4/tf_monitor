@@ -20,7 +20,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: '@/plugins/setInterval' }],
+  plugins: ['@/plugins/plugins.js', { src: '@/plugins/setInterval' }],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

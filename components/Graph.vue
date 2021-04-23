@@ -35,6 +35,17 @@ export default {
       },
     }
   },
+  watch: {
+    label(newValue) {
+      this.label = newValue
+    },
+    numb(newValue) {
+      this.numb = newValue
+    },
+    data(newValue) {
+      this.data = newValue
+    },
+  },
   mounted() {
     this.renderChart(this.chartData, this.options)
   },

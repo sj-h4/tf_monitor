@@ -24,12 +24,14 @@
         </v-card>
       </v-col>
       <v-col v-for="(i, key) in item" :key="key" cols="12">
-        <graph
-          v-if="loaded"
-          :label="item[key]"
-          :numb="numb[key]"
-          :data="data[key]"
-        />
+        <v-card elevation="2" tile>
+          <graph
+            v-if="loaded"
+            :label="item[key]"
+            :numb="numb[key]"
+            :data="data[key]"
+          />
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

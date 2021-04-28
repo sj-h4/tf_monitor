@@ -4,26 +4,26 @@
       <v-col cols="6">
         <v-select
           v-model="selected"
-          placeholder="取得データ数"
-          :options="['10', '50', '100', '500']"
-          @input="handleSelect"
+          label="取得データ数"
+          :items="items"
+          @change="handleSelect"
         ></v-select>
       </v-col>
       <v-col cols="6">
         <v-select
           v-model="selected2"
-          placeholder="TF選択"
-          :options="tf"
-          @input="handleSelect"
+          label="TF選択"
+          :items="tf"
+          @change="handleSelect"
         ></v-select>
       </v-col>
-      <v-col v-for="(i, key) in latestData" :key="key" cols="4">
+      <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="4">
         <v-card elevation="2" tile>
           <v-card-title>最新の{{ latestDataLabel[key] }}</v-card-title>
           <v-card-subtitle>{{ i }}{{ latestDataUnit[key] }}</v-card-subtitle>
         </v-card>
       </v-col>
-      <v-col v-for="(i, key) in item" :key="key" cols="12">
+      <v-col v-for="(i, key) in item" :key="'B' + key" cols="12">
         <v-card elevation="2" tile>
           <graph
             v-if="loaded"
@@ -53,6 +53,7 @@ export default {
       item: [],
       tf: [],
       data: [],
+      items: ['10', '50', '100', '500'],
       latestDataLabel: ['気速', '高度', '回転数'],
       latestDataUnit: ['m/s', 'm', 'rad/s'],
       latestData: [],

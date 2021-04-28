@@ -19,7 +19,7 @@
       </v-col>
       <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="4">
         <v-card elevation="2" tile>
-          <v-card-title>最新の{{ latestDataLabel[key] }}</v-card-title>
+          <v-card-title>{{ latestDataLabel[key] }}</v-card-title>
           <v-card-subtitle>{{ i }}{{ latestDataUnit[key] }}</v-card-subtitle>
         </v-card>
       </v-col>
@@ -123,7 +123,7 @@ export default {
         const n = []
         this.data[i].forEach(function (elem) {
           l.unshift(elem.data)
-          n.unshift(elem.numbering)
+          n.unshift(elem.created_at.substr(11, 11))
         })
         this.data[i] = l
         this.numb[i] = n

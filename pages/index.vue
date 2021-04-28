@@ -1,20 +1,38 @@
 <template>
-  <div>
-    <v-select
-      v-model="selected"
-      placeholder="取得データ数"
-      :options="['10', '100', '1000']"
-      @input="handleSelect"
-    ></v-select>
-    <div v-for="(i, key) in item" :key="key">
-      <graph
-        v-if="loaded"
-        :label="item[key]"
-        :numb="numb[key]"
-        :data="data[key]"
-      />
-    </div>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col cols="6">
+        <v-select
+          v-model="selected"
+          placeholder="取得データ数"
+          :options="['10', '50', '100', '500']"
+          @input="handleSelect"
+        ></v-select>
+      </v-col>
+      <v-col cols="6">
+        <v-select
+          v-model="selected2"
+          placeholder="TF選択"
+          :options="tf"
+          @input="handleSelect"
+        ></v-select>
+      </v-col>
+      <v-col v-for="(i, key) in latestData" :key="key" cols="4">
+        <v-card elevation="2" tile>
+          <v-card-title>最新の{{ latestDataLabel[key] }}</v-card-title>
+          <v-card-subtitle>{{ i }}{{ latestDataUnit[key] }}</v-card-subtitle>
+        </v-card>
+      </v-col>
+      <v-col v-for="(i, key) in item" :key="key" cols="12">
+        <graph
+          v-if="loaded"
+          :label="item[key]"
+          :numb="numb[key]"
+          :data="data[key]"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -27,11 +45,15 @@ export default {
   },
   data() {
     return {
-      selected: '100',
+      selected: '10',
+      selected2: '',
       numb: [],
       item: [],
       tf: [],
       data: [],
+      latestDataLabel: ['気速', '高度', '回転数'],
+      latestDataUnit: ['m/s', 'm', 'rad/s'],
+      latestData: [],
       loaded: false,
     }
   },
@@ -44,6 +66,12 @@ export default {
       .get('https://tatekan.copynight.net/kubtss/tf/')
       .then((res) => {
         this.tf = res.data
+        const t = []
+        this.tf.forEach(function (elem) {
+          t.unshift(elem.name)
+        })
+        this.tf = t
+        this.selected2 = this.tf[0]
       })
       .catch((err) => {
         return err
@@ -77,6 +105,8 @@ export default {
           .get(
             'https://tatekan.copynight.net/kubtss/data/?item=' +
               this.item[i].name +
+              '&tf=' +
+              this.selected2 +
               '&top=' +
               this.selected
           )
@@ -95,6 +125,11 @@ export default {
         this.data[i] = l
         this.numb[i] = n
       }
+      const ld = []
+      ld.push(this.data[0][this.data[0].length - 1])
+      ld.push(this.data[1][this.data[1].length - 1])
+      ld.push(this.data[2][this.data[2].length - 1])
+      this.latestData = ld
       this.loaded = true
     },
   },

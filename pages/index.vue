@@ -1,33 +1,41 @@
 <template>
   <v-container>
-    <v-row no-gutters>
-      <v-col cols="6">
-        <v-select
-          v-model="selected"
-          label="取得データ数"
-          :items="items"
-          @change="handleSelect"
-        ></v-select>
+    <v-row>
+      <v-col cols="12">
+        <v-row>
+          <v-col cols="6">
+            <v-select
+              v-model="selected"
+              label="取得データ数"
+              :items="items"
+              @change="handleSelect"
+            ></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-select
+              v-model="selected2"
+              label="TF選択"
+              :items="tf"
+              @change="handleSelect"
+            ></v-select>
+          </v-col>
+        </v-row>
       </v-col>
-      <v-col cols="6">
-        <v-select
-          v-model="selected2"
-          label="TF選択"
-          :items="tf"
-          @change="handleSelect"
-        ></v-select>
-      </v-col>
-      <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="3">
-        <v-card elevation="2" tile>
-          <v-card-title>{{ latestDataLabel[key] }}</v-card-title>
-          <v-card-subtitle>{{ i }}{{ item[key].unit }}</v-card-subtitle>
-        </v-card>
-      </v-col>
-      <v-col cols="3">
-        <v-card elevation="2" tile>
-          <v-card-title>風速</v-card-title>
-          <v-card-subtitle>{{ ws }}m/s</v-card-subtitle>
-        </v-card>
+      <v-col cols="12">
+        <v-row no-gutters>
+          <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="3">
+            <v-card elevation="2" tile>
+              <v-card-title>{{ latestDataLabel[key] }}</v-card-title>
+              <v-card-subtitle>{{ i }}{{ item[key].unit }}</v-card-subtitle>
+            </v-card>
+          </v-col>
+          <v-col cols="3">
+            <v-card elevation="2" tile>
+              <v-card-title>風速</v-card-title>
+              <v-card-subtitle>{{ ws }}m/s</v-card-subtitle>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
       <v-col cols="12">
         <v-card elevation="2" tile>

@@ -17,10 +17,21 @@
           @change="handleSelect"
         ></v-select>
       </v-col>
-      <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="4">
+      <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="6">
         <v-card elevation="2" tile>
           <v-card-title>{{ latestDataLabel[key] }}</v-card-title>
-          <v-card-subtitle>{{ i }}{{ latestDataUnit[key] }}</v-card-subtitle>
+          <v-card-subtitle>{{ i }}{{ item[key].unit }}</v-card-subtitle>
+        </v-card>
+      </v-col>
+      <v-col cols="6">
+        <v-card elevation="2" tile>
+          <v-card-title>風力</v-card-title>
+          <v-card-subtitle>{{ ws }}m/s</v-card-subtitle>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card elevation="2" tile>
+          <wind v-if="subLoaded" :numb="wdnumb" :data="wddata" />
         </v-card>
       </v-col>
       <v-col v-for="(i, key) in item" :key="'B' + key" cols="12">
@@ -40,10 +51,12 @@
 <script>
 import axios from 'axios'
 import Graph from '~/components/Graph.vue'
+import Wind from '~/components/Wind.vue'
 
 export default {
   components: {
     Graph,
+    Wind,
   },
   data() {
     return {
@@ -53,14 +66,22 @@ export default {
       item: [],
       tf: [],
       data: [],
+      ws: '',
+      wd: '',
+      wdnumb: [36],
+      wddata: [0],
       items: ['10', '50', '100', '500'],
-      latestDataLabel: ['気速', '高度', '回転数'],
-      latestDataUnit: ['m/s', 'm', 'rad/s'],
+      latestDataLabel: ['高度', '気速', '回転数'],
       latestData: [],
       loaded: false,
+      subLoaded: false,
     }
   },
   async mounted() {
+    for (let x = 1; x < 36; x++) {
+      this.wdnumb.push(x)
+      this.wddata.push(0)
+    }
     for (let x = 0; x < 3; x++) {
       this.data.push([])
       this.numb.push([])
@@ -102,6 +123,37 @@ export default {
       }, 10000)
     },
     async get() {
+      this.subLoaded = false
+      await axios
+        .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
+        .then((res) => {
+          this.ws = res.data
+          this.ws = this.ws[0].subdata
+        })
+        .catch((err) => {
+          return err
+        })
+      await axios
+        .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=wd')
+        .then((res) => {
+          this.wd = res.data
+          this.wd = this.wd[0].subdata
+          for (let x = 0; x < 36; x++) {
+            this.wddata[x] = 0
+          }
+          if (this.wd === 36) {
+            this.wddata[0] = this.ws
+          } else {
+            this.wddata[this.wd] = this.ws
+          }
+          this.wddata[(this.wd + 1) % 36] = this.ws * 0.7
+          this.wddata[this.wd - 1] = this.ws * 0.7
+        })
+        .catch((err) => {
+          return err
+        })
+      this.subLoaded = true
+
       this.loaded = false
       for (const i in this.item) {
         await axios

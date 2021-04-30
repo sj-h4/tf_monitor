@@ -1,9 +1,9 @@
 <script>
-import { Line, mixins } from 'vue-chartjs'
+import { Radar, mixins } from 'vue-chartjs'
 const { reactiveData } = mixins
 
 export default {
-  extends: Line,
+  extends: Radar,
   mixins: [reactiveData],
   props: {
     label: {
@@ -22,9 +22,9 @@ export default {
         labels: this.numb,
         datasets: [
           {
+            label: 'wind',
             lineTension: 0,
-            label: this.label.name,
-            backgroundColor: '#f87979',
+            backgroundColor: '#00bfff',
             data: this.data,
           },
         ],

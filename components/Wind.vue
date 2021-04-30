@@ -23,7 +23,6 @@ export default {
         datasets: [
           {
             label: 'wind',
-            lineTension: 0,
             backgroundColor: '#00bfff',
             data: this.data,
           },

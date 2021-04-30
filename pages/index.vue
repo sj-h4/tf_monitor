@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row no-gutters>
       <v-col cols="6">
         <v-select
           v-model="selected"
@@ -17,15 +17,15 @@
           @change="handleSelect"
         ></v-select>
       </v-col>
-      <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="6">
+      <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="3">
         <v-card elevation="2" tile>
           <v-card-title>{{ latestDataLabel[key] }}</v-card-title>
           <v-card-subtitle>{{ i }}{{ item[key].unit }}</v-card-subtitle>
         </v-card>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="3">
         <v-card elevation="2" tile>
-          <v-card-title>風力</v-card-title>
+          <v-card-title>風速</v-card-title>
           <v-card-subtitle>{{ ws }}m/s</v-card-subtitle>
         </v-card>
       </v-col>

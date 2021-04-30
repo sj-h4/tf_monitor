@@ -31,7 +31,7 @@
       </v-col>
       <v-col cols="12">
         <v-card elevation="2" tile>
-          <wind v-if="subLoaded" :numb="wdnumb" :data="wddata" />
+          <wind v-if="loaded" :numb="wdnumb" :data="wddata" />
         </v-card>
       </v-col>
       <v-col v-for="(i, key) in item" :key="'B' + key" cols="12">
@@ -74,7 +74,6 @@ export default {
       latestDataLabel: ['高度', '気速', '回転数'],
       latestData: [],
       loaded: false,
-      subLoaded: false,
     }
   },
   async mounted() {
@@ -123,7 +122,7 @@ export default {
       }, 10000)
     },
     async get() {
-      this.subLoaded = false
+      this.loaded = false
       await axios
         .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
         .then((res) => {
@@ -152,9 +151,6 @@ export default {
         .catch((err) => {
           return err
         })
-      this.subLoaded = true
-
-      this.loaded = false
       for (const i in this.item) {
         await axios
           .get(

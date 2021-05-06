@@ -32,7 +32,7 @@
           <v-col cols="3">
             <v-card elevation="2" tile>
               <v-card-title>風速</v-card-title>
-              <v-card-subtitle>{{ ws }}m/s</v-card-subtitle>
+              <v-card-subtitle>{{ real }}m/s</v-card-subtitle>
             </v-card>
           </v-col>
         </v-row>
@@ -74,6 +74,7 @@ export default {
       item: [],
       tf: [],
       data: [],
+      real: '',
       ws: '',
       wd: '',
       wdnumb: [36],
@@ -119,7 +120,7 @@ export default {
     this.get()
     this.$setInterval(() => {
       this.get()
-    }, 10000)
+    }, 3000)
   },
   methods: {
     handleSelect() {
@@ -127,7 +128,7 @@ export default {
       this.get()
       this.$setInterval(() => {
         this.get()
-      }, 10000)
+      }, 3000)
     },
     async get() {
       this.loaded = false
@@ -135,7 +136,11 @@ export default {
         .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
         .then((res) => {
           this.ws = res.data
+          this.real = this.ws[0].subdata
           this.ws = this.ws[0].subdata
+          if (this.ws > 5) {
+            this.ws = 5
+          }
         })
         .catch((err) => {
           return err

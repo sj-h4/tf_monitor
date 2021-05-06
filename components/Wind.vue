@@ -29,6 +29,12 @@ export default {
         ],
       },
       options: {
+        scale: {
+          ticks: {
+            max: 5,
+            beginAtZero: true,
+          },
+        },
         responsive: true,
         maintainAspectRatio: false,
       },

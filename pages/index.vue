@@ -179,13 +179,14 @@ export default {
       this.$clearAllIntervals()
       this.getLatest()
       this.get()
-
-      this.$setInterval(() => {
-        this.getLatest()
-      }, 1000)
-      this.$setInterval(() => {
-        this.get()
-      }, 10000)
+      if (this.enabled === true) {
+        this.$setInterval(() => {
+          this.getLatest()
+        }, 1000)
+        this.$setInterval(() => {
+          this.get()
+        }, 10000)
+      }
     },
     async get() {
       this.loaded = false

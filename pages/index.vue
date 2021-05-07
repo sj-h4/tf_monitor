@@ -23,16 +23,22 @@
       </v-col>
       <v-col cols="12">
         <v-row no-gutters>
-          <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="3">
+          <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="4">
             <v-card elevation="2" tile>
-              <v-card-title>{{ latestDataLabel[key] }}</v-card-title>
-              <v-card-subtitle>{{ i }}{{ item[key].unit }}</v-card-subtitle>
+              <v-card-text>
+                <div>{{ item[key].label }}</div>
+                <p class="display-1 text--primary">
+                  {{ i }}{{ item[key].unit }}
+                </p>
+              </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="4">
             <v-card elevation="2" tile>
-              <v-card-title>風速</v-card-title>
-              <v-card-subtitle>{{ real }}m/s</v-card-subtitle>
+              <v-card-text>
+                <div>風速</div>
+                <p class="display-1 text--primary">{{ real }}m/s</p>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -80,7 +86,6 @@ export default {
       wdnumb: [36],
       wddata: [0],
       items: ['10', '50', '100', '500'],
-      latestDataLabel: ['高度', '気速', '回転数'],
       latestData: [],
       loaded: false,
     }
@@ -117,34 +122,31 @@ export default {
         return err
       })
     this.$clearAllIntervals()
+    this.getLatest()
     this.get()
+
+    this.$setInterval(() => {
+      this.getLatest()
+    }, 1000)
     this.$setInterval(() => {
       this.get()
-    }, 3000)
+    }, 10000)
   },
   methods: {
     handleSelect() {
       this.$clearAllIntervals()
+      this.getLatest()
       this.get()
+
+      this.$setInterval(() => {
+        this.getLatest()
+      }, 1000)
       this.$setInterval(() => {
         this.get()
-      }, 3000)
+      }, 10000)
     },
     async get() {
       this.loaded = false
-      await axios
-        .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
-        .then((res) => {
-          this.ws = res.data
-          this.real = this.ws[0].subdata
-          this.ws = this.ws[0].subdata
-          if (this.ws > 5) {
-            this.ws = 5
-          }
-        })
-        .catch((err) => {
-          return err
-        })
       await axios
         .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=wd')
         .then((res) => {
@@ -189,12 +191,38 @@ export default {
         this.data[i] = l
         this.numb[i] = n
       }
-      const ld = []
-      ld.push(this.data[0][this.data[0].length - 1])
-      ld.push(this.data[1][this.data[1].length - 1])
-      ld.push(this.data[2][this.data[2].length - 1])
-      this.latestData = ld
       this.loaded = true
+    },
+    async getLatest() {
+      await axios
+        .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
+        .then((res) => {
+          this.ws = res.data
+          this.real = this.ws[0].subdata
+          this.ws = this.ws[0].subdata
+          if (this.ws > 5) {
+            this.ws = 5
+          }
+        })
+        .catch((err) => {
+          return err
+        })
+      for (const i in this.item) {
+        await axios
+          .get(
+            'https://tatekan.copynight.net/kubtss/data/?item=' +
+              this.item[i].name +
+              '&tf=' +
+              this.selected2 +
+              '&top=1'
+          )
+          .then((res) => {
+            this.latestData[i] = res.data[0].data
+          })
+          .catch((err) => {
+            return err
+          })
+      }
     },
   },
 }

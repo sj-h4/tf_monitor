@@ -1,5 +1,8 @@
 import Vue from 'vue'
 
+import Switches from 'vue-switches'
+Vue.component('Switches', Switches)
+
 Vue.prototype.$intervals = []
 
 Vue.prototype.$setInterval = (func, intervalMilliSec) => {

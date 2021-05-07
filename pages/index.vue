@@ -3,6 +3,15 @@
     <v-row>
       <v-col cols="12">
         <v-row>
+          <v-col cols="2">
+            <switches v-model="enabled" theme="bulma" color="red"></switches>
+          </v-col>
+          <v-col cols="4">
+            <v-btn color="primary" depressed block large @click="reload()">
+              TFリロード
+            </v-btn>
+          </v-col>
+          <v-col cols="6" />
           <v-col cols="6">
             <v-select
               v-model="selected"
@@ -23,7 +32,7 @@
       </v-col>
       <v-col cols="12">
         <v-row no-gutters>
-          <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="4">
+          <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="6">
             <v-card elevation="2" tile>
               <v-card-text>
                 <div>{{ item[key].label }}</div>
@@ -33,7 +42,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="6">
             <v-card elevation="2" tile>
               <v-card-text>
                 <div>風速</div>
@@ -74,6 +83,7 @@ export default {
   },
   data() {
     return {
+      enabled: 'true',
       selected: '10',
       selected2: '',
       numb: [],
@@ -89,6 +99,22 @@ export default {
       latestData: [],
       loaded: false,
     }
+  },
+  watch: {
+    enabled() {
+      if (this.enabled === false) {
+        this.$clearAllIntervals()
+      }
+      if (this.enabled === true) {
+        this.$clearAllIntervals()
+        this.$setInterval(() => {
+          this.getLatest()
+        }, 1000)
+        this.$setInterval(() => {
+          this.get()
+        }, 10000)
+      }
+    },
   },
   async mounted() {
     for (let x = 1; x < 36; x++) {
@@ -133,6 +159,22 @@ export default {
     }, 10000)
   },
   methods: {
+    async reload() {
+      await axios
+        .get('https://tatekan.copynight.net/kubtss/tf/')
+        .then((res) => {
+          this.tf = res.data
+          const t = []
+          this.tf.forEach(function (elem) {
+            t.unshift(elem.name)
+          })
+          this.tf = t
+          this.selected2 = this.tf[0]
+        })
+        .catch((err) => {
+          return err
+        })
+    },
     handleSelect() {
       this.$clearAllIntervals()
       this.getLatest()

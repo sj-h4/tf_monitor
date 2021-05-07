@@ -264,6 +264,7 @@ export default {
           .catch((err) => {
             return err
           })
+        this.latestData.splice(5)
       }
     },
   },

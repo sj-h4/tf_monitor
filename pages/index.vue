@@ -179,7 +179,8 @@ export default {
       this.$clearAllIntervals()
       this.getLatest()
       this.get()
-      if (this.enabled === true) {
+      console.log(this.enabled)
+      if (this.enabled === 'true') {
         this.$setInterval(() => {
           this.getLatest()
         }, 1000)

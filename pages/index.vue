@@ -65,6 +65,12 @@
             :numb="numb[key]"
             :data="data[key]"
           />
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="download(key)">
+              <v-icon>mdi-download</v-icon>
+            </v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -89,13 +95,14 @@ export default {
       numb: [],
       item: [],
       tf: [],
+      tfid: [],
       data: [],
       real: '',
       ws: '',
       wd: '',
       wdnumb: [36],
       wddata: [0],
-      items: ['10', '50', '100', '500'],
+      items: ['10', '50', '100', '300'],
       latestData: [],
       loaded: false,
     }
@@ -130,10 +137,13 @@ export default {
       .then((res) => {
         this.tf = res.data
         const t = []
+        const ti = []
         this.tf.forEach(function (elem) {
           t.unshift(elem.name)
+          ti.unshift(elem.id)
         })
         this.tf = t
+        this.tfid = ti
         this.selected2 = this.tf[0]
       })
       .catch((err) => {
@@ -175,11 +185,32 @@ export default {
           return err
         })
     },
+    download(key) {
+      axios
+        .get(
+          'https://tatekan.copynight.net/download/streaming/' +
+            '?tf=' +
+            this.selected2 +
+            '&item=' +
+            this.item[key].name,
+          { responseType: 'blob' }
+        )
+        .then((response) => {
+          const url = URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute(
+            'download',
+            this.selected2 + '_' + this.item[key].name + '.csv'
+          )
+          document.body.appendChild(link)
+          link.click()
+        })
+    },
     handleSelect() {
       this.$clearAllIntervals()
       this.getLatest()
       this.get()
-      console.log(this.enabled)
       if (this.enabled === 'true') {
         this.$setInterval(() => {
           this.getLatest()

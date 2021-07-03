@@ -32,7 +32,6 @@ export default {
   watch: {
     data() {
       this.render()
-      console.log(this.data)
     },
   },
   mounted() {

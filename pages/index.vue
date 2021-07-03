@@ -102,7 +102,7 @@ export default {
       wd: '',
       wdnumb: [],
       wddata: [],
-      items: ['50', '100', '300', '500'],
+      items: ['50', '100', '300', '1000'],
       latestData: [],
     }
   },
@@ -131,7 +131,7 @@ export default {
       this.data.push([])
       this.numb.push([])
     }
-    await axios
+    const tf = axios
       .get('https://tatekan.copynight.net/kubtss/tf/')
       .then((res) => {
         this.tf = res.data
@@ -148,7 +148,7 @@ export default {
       .catch((err) => {
         return err
       })
-    await axios
+    const item = axios
       .get('https://tatekan.copynight.net/kubtss/item/')
       .then((res) => {
         this.item = res.data
@@ -156,6 +156,8 @@ export default {
       .catch((err) => {
         return err
       })
+    await tf
+    await item
     this.$clearAllIntervals()
     this.getLatest()
     this.get()
@@ -169,7 +171,7 @@ export default {
   },
   methods: {
     async reload() {
-      await axios
+      const tf = axios
         .get('https://tatekan.copynight.net/kubtss/tf/')
         .then((res) => {
           this.tf = res.data
@@ -183,6 +185,7 @@ export default {
         .catch((err) => {
           return err
         })
+      await tf
     },
     download(key) {
       axios
@@ -221,7 +224,7 @@ export default {
     },
     async get() {
       for (const i in this.item) {
-        await axios
+        const dt = axios
           .get(
             'https://tatekan.copynight.net/kubtss/data/?item=' +
               this.item[i].name +
@@ -236,6 +239,7 @@ export default {
           .catch((err) => {
             return err
           })
+        await dt
         const l = []
         const n = []
         this.data[i].forEach(function (elem) {
@@ -246,8 +250,8 @@ export default {
         this.numb[i] = n
       }
     },
-    async getLatest() {
-      await axios
+    getLatest() {
+      axios
         .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=wd')
         .then((res) => {
           this.wd = res.data
@@ -267,7 +271,7 @@ export default {
         .catch((err) => {
           return err
         })
-      await axios
+      axios
         .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
         .then((res) => {
           this.ws = res.data
@@ -281,7 +285,7 @@ export default {
           return err
         })
       for (const i in this.item) {
-        await axios
+        axios
           .get(
             'https://tatekan.copynight.net/kubtss/data/?item=' +
               this.item[i].name +

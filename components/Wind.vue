@@ -6,28 +6,17 @@ export default {
   extends: Radar,
   mixins: [reactiveData],
   props: {
-    label: {
-      type: Object,
-    },
     numb: {
       type: Array,
+      default: null,
     },
     data: {
       type: Array,
+      default: null,
     },
   },
   data() {
     return {
-      chartData: {
-        labels: this.numb,
-        datasets: [
-          {
-            label: 'wind',
-            backgroundColor: '#00bfff',
-            data: this.data,
-          },
-        ],
-      },
       options: {
         scale: {
           ticks: {
@@ -40,8 +29,28 @@ export default {
       },
     }
   },
+  watch: {
+    data() {
+      this.render()
+      console.log(this.data)
+    },
+  },
   mounted() {
-    this.renderChart(this.chartData, this.options)
+    this.render()
+  },
+  methods: {
+    render() {
+      this.chartData = {
+        labels: this.numb,
+        datasets: [
+          {
+            label: 'wind',
+            backgroundColor: '#00bfff',
+            data: this.data,
+          },
+        ],
+      }
+    },
   },
 }
 </script>

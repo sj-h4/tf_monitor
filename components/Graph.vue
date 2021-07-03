@@ -8,17 +8,37 @@ export default {
   props: {
     label: {
       type: Object,
+      default: null,
     },
     numb: {
       type: Array,
+      default: null,
     },
     data: {
       type: Array,
+      default: null,
     },
   },
   data() {
     return {
-      chartData: {
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    }
+  },
+
+  watch: {
+    data() {
+      this.render()
+    },
+  },
+  mounted() {
+    this.render()
+  },
+  methods: {
+    render() {
+      this.chartData = {
         labels: this.numb,
         datasets: [
           {
@@ -28,15 +48,8 @@ export default {
             data: this.data,
           },
         ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-      },
-    }
-  },
-  mounted() {
-    this.renderChart(this.chartData, this.options)
+      }
+    },
   },
 }
 </script>

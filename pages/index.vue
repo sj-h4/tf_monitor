@@ -32,7 +32,20 @@
       </v-col>
       <v-col cols="12">
         <v-row no-gutters>
-          <v-col v-for="(i, key) in latestData" :key="'A' + key" cols="6">
+          <v-col cols="6" md="4">
+            <v-card elevation="2" tile>
+              <v-card-text>
+                <div>風速</div>
+                <p class="display-1 text--primary">{{ real }}m/s</p>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col
+            v-for="(i, key) in latestData"
+            :key="'A' + key"
+            cols="6"
+            md="4"
+          >
             <v-card elevation="2" tile>
               <v-card-text>
                 <div>{{ item[key].label }}</div>
@@ -42,29 +55,16 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="6">
-            <v-card elevation="2" tile>
-              <v-card-text>
-                <div>風速</div>
-                <p class="display-1 text--primary">{{ real }}m/s</p>
-              </v-card-text>
-            </v-card>
-          </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" md="4">
         <v-card elevation="2" tile>
-          <wind v-if="loaded" :numb="wdnumb" :data="wddata" />
+          <wind :numb="wdnumb" :data="wddata" />
         </v-card>
       </v-col>
-      <v-col v-for="(i, key) in item" :key="'B' + key" cols="12">
+      <v-col v-for="(i, key) in item" :key="'B' + key" cols="12" md="4">
         <v-card elevation="2" tile>
-          <graph
-            v-if="loaded"
-            :label="item[key]"
-            :numb="numb[key]"
-            :data="data[key]"
-          />
+          <graph :label="item[key]" :numb="numb[key]" :data="data[key]" />
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn icon @click="download(key)">
@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       enabled: 'true',
-      selected: '10',
+      selected: '50',
       selected2: '',
       numb: [],
       item: [],
@@ -100,11 +100,10 @@ export default {
       real: '',
       ws: '',
       wd: '',
-      wdnumb: [36],
-      wddata: [0],
-      items: ['10', '50', '100', '300'],
+      wdnumb: [],
+      wddata: [],
+      items: ['50', '100', '300', '500'],
       latestData: [],
-      loaded: false,
     }
   },
   watch: {
@@ -116,17 +115,17 @@ export default {
         this.$clearAllIntervals()
         this.$setInterval(() => {
           this.getLatest()
-        }, 1000)
+        }, 500)
         this.$setInterval(() => {
           this.get()
-        }, 10000)
+        }, Number(this.selected) * 100)
       }
     },
   },
   async mounted() {
+    this.wdnumb.push(36)
     for (let x = 1; x < 36; x++) {
       this.wdnumb.push(x)
-      this.wddata.push(0)
     }
     for (let x = 0; x < 3; x++) {
       this.data.push([])
@@ -163,10 +162,10 @@ export default {
 
     this.$setInterval(() => {
       this.getLatest()
-    }, 1000)
+    }, 500)
     this.$setInterval(() => {
       this.get()
-    }, 10000)
+    }, Number(this.selected) * 100)
   },
   methods: {
     async reload() {
@@ -214,33 +213,13 @@ export default {
       if (this.enabled === 'true') {
         this.$setInterval(() => {
           this.getLatest()
-        }, 1000)
+        }, 500)
         this.$setInterval(() => {
           this.get()
-        }, 10000)
+        }, Number(this.selected) * 100)
       }
     },
     async get() {
-      this.loaded = false
-      await axios
-        .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=wd')
-        .then((res) => {
-          this.wd = res.data
-          this.wd = this.wd[0].subdata
-          for (let x = 0; x < 36; x++) {
-            this.wddata[x] = 0
-          }
-          if (this.wd === 36) {
-            this.wddata[0] = this.ws
-          } else {
-            this.wddata[this.wd] = this.ws
-          }
-          this.wddata[(this.wd + 1) % 36] = this.ws * 0.7
-          this.wddata[this.wd - 1] = this.ws * 0.7
-        })
-        .catch((err) => {
-          return err
-        })
       for (const i in this.item) {
         await axios
           .get(
@@ -266,9 +245,28 @@ export default {
         this.data[i] = l
         this.numb[i] = n
       }
-      this.loaded = true
     },
     async getLatest() {
+      await axios
+        .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=wd')
+        .then((res) => {
+          this.wd = res.data
+          this.wd = this.wd[0].subdata
+          this.wddata = []
+          for (let x = 0; x < 36; x++) {
+            this.wddata.push(0)
+          }
+          if (this.wd === 36) {
+            this.wddata[0] = this.ws
+          } else {
+            this.wddata[this.wd] = this.ws
+          }
+          this.wddata[(this.wd + 1) % 36] = this.ws * 0.7
+          this.wddata[this.wd - 1] = this.ws * 0.7
+        })
+        .catch((err) => {
+          return err
+        })
       await axios
         .get('https://tatekan.copynight.net/kubtss/subdata/?top=1&subitem=ws')
         .then((res) => {

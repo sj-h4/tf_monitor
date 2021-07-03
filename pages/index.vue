@@ -11,8 +11,8 @@
               TFリロード
             </v-btn>
           </v-col>
-          <v-col cols="6" />
-          <v-col cols="6">
+          <v-col cols="6" class="hidden-md-and-up" />
+          <v-col cols="6" md="3">
             <v-select
               v-model="selected"
               label="取得データ数"
@@ -20,7 +20,7 @@
               @change="handleSelect"
             ></v-select>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="6" md="3">
             <v-select
               v-model="selected2"
               label="TF選択"
@@ -32,7 +32,7 @@
       </v-col>
       <v-col cols="12">
         <v-row no-gutters>
-          <v-col cols="6" md="4">
+          <v-col cols="6" md="2">
             <v-card elevation="2" tile>
               <v-card-text>
                 <div>風速</div>
@@ -44,7 +44,7 @@
             v-for="(i, key) in latestData"
             :key="'A' + key"
             cols="6"
-            md="4"
+            md="2"
           >
             <v-card elevation="2" tile>
               <v-card-text>

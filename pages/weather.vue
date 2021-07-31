@@ -51,8 +51,8 @@
                   v-for="(w, key) in winddata"
                   :key="key"
                   :lat-lng="[w.longitude, w.latitude]"
-                  :icon="icongenerate((Math.round(w.wd / 2.25) % 16) + 1, w.wd)"
-                  ><l-popup :content="String(w.wd) + 'm/s'"></l-popup>
+                  :icon="icongenerate((Math.round(w.wd / 2.25) % 16) + 1, w.ws)"
+                  ><l-popup :content="String(w.ws) + 'm/s'"></l-popup>
                 </l-marker>
                 <l-marker :lat-lng="[pt[0], pt[1]]" :icon="placegenerate()">
                 </l-marker>

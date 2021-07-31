@@ -151,7 +151,7 @@ export default {
     icongenerate(iwd, iws) {
       return this.$L.icon({
         iconUrl: 'https://copynight.net/weather/' + String(iwd) + '.png',
-        iconSize: [32 * Math.sqrt(iws), 12 * Math.sqrt(iws)],
+        iconSize: [32 * Math.sqrt(iws), 32 * Math.sqrt(iws)],
       })
     },
     placegenerate() {

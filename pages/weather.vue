@@ -92,7 +92,7 @@ export default {
       center: [35.293454, 136.124555],
       zoom: 11,
       minZoom: 11,
-      maxZoom: 13,
+      maxZoom: 15,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
     }
   },
@@ -145,6 +145,9 @@ export default {
   methods: {
     place() {
       this.center = []
+      this.center.push(0)
+      this.center.push(0)
+      this.center = []
       this.center.push(this.latitude)
       this.center.push(this.longitude)
     },
@@ -156,7 +159,7 @@ export default {
     },
     placegenerate() {
       return this.$L.icon({
-        iconAnchor: [40, 64],
+        iconAnchor: [15, 24],
         iconUrl: 'https://copynight.net/weather/marker-icon.png',
         iconSize: [30, 48],
       })

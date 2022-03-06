@@ -108,14 +108,14 @@ export default {
       this.numb.push([])
     }
     const tf = axios
-      .get('https://tatekan.copynight.net/kubtss/tf/')
+      .get('https://onkhnztarc.execute-api.ap-northeast-1.amazonaws.com/kubtss/tf', { headers: { 'X-API-KEY': process.env.VUE_APP_APIKEY } })
       .then((res) => {
         this.tf = res.data
         const t = []
         const ti = []
         this.tf.forEach(function (elem) {
-          t.unshift(elem.name)
-          ti.unshift(elem.id)
+          t.unshift(elem.tf_name)
+          ti.unshift(elem.created_at)
         })
         this.tf = t
         this.selected2 = this.tf[0]
@@ -147,12 +147,12 @@ export default {
   methods: {
     async reload() {
       const tf = axios
-        .get('https://tatekan.copynight.net/kubtss/tf/')
+        .get('https://onkhnztarc.execute-api.ap-northeast-1.amazonaws.com/kubtss/tf', { headers: { 'X-API-KEY': process.env.VUE_APP_APIKEY } })
         .then((res) => {
           this.tf = res.data
           const t = []
           this.tf.forEach(function (elem) {
-            t.unshift(elem.name)
+            t.unshift(elem.tf_name)
           })
           this.tf = t
           this.selected2 = this.tf[0]

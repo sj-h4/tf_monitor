@@ -74,11 +74,11 @@ export default {
   },
   data() {
     return {
-      enabled: 'true',
+      enabled: 'false',
       selected: '50',
       selected2: '',
       numb: [],
-      item: [],
+      item: ['airspeed', 'altitude', 'rotation', 'power', 'pitch', 'roll'],
       tf: [],
       data: [],
       real: '',
@@ -108,7 +108,9 @@ export default {
       this.numb.push([])
     }
     const tf = axios
-      .get('https://onkhnztarc.execute-api.ap-northeast-1.amazonaws.com/kubtss/tf', { headers: { 'X-API-KEY': process.env.VUE_APP_APIKEY } })
+      .get('/tf/', {
+        headers: { 'X-API-KEY': this.$config.apiKey },
+      })
       .then((res) => {
         this.tf = res.data
         const t = []
@@ -123,16 +125,7 @@ export default {
       .catch((err) => {
         return err
       })
-    const item = axios
-      .get('https://tatekan.copynight.net/kubtss/item/')
-      .then((res) => {
-        this.item = res.data
-      })
-      .catch((err) => {
-        return err
-      })
     await tf
-    await item
     this.$clearAllIntervals()
     this.getLatest()
     this.get()
@@ -146,10 +139,13 @@ export default {
   },
   methods: {
     async reload() {
-      const tf = axios
-        .get('https://onkhnztarc.execute-api.ap-northeast-1.amazonaws.com/kubtss/tf', { headers: { 'X-API-KEY': process.env.VUE_APP_APIKEY } })
+      const tf = this.$axios
+        .get('/api/', {
+          headers: { 'X-API-KEY': this.$config.apiKey },
+        })
         .then((res) => {
           this.tf = res.data
+          this.$log.debug(res)
           const t = []
           this.tf.forEach(function (elem) {
             t.unshift(elem.tf_name)
@@ -162,10 +158,11 @@ export default {
         })
       await tf
     },
+    /*
     download(key) {
       axios
         .get(
-          'https://tatekan.copynight.net/download/streaming/' +
+          process.env.VUE_APP_BASE_URL +
             '?tf=' +
             this.selected2 +
             '&item=' +
@@ -184,6 +181,7 @@ export default {
           link.click()
         })
     },
+    */
     handleSelect() {
       this.$clearAllIntervals()
       this.getLatest()
@@ -201,7 +199,7 @@ export default {
       for (const i in this.item) {
         const dt = axios
           .get(
-            'https://tatekan.copynight.net/kubtss/data/?item=' +
+            this.$config.baseURL +
               this.item[i].name +
               '&tf=' +
               this.selected2 +
@@ -231,7 +229,7 @@ export default {
       for (const i in this.item) {
         axios
           .get(
-            'https://tatekan.copynight.net/kubtss/data/?item=' +
+            this.$config.baseURL +
               this.item[i].name +
               '&tf=' +
               this.selected2 +

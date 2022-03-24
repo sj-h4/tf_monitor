@@ -49,9 +49,9 @@ export default {
 
   proxy: {
     '/api/': {
-      target: `https://onkhnztarc.execute-api.ap-northeast-1.amazonaws.com/kubtss/tf`,
+      target: `https://onkhnztarc.execute-api.ap-northeast-1.amazonaws.com/kubtss`,
       pathRewrite: {
-        '^/api/': '',
+        '^/api/': '/',
       },
     },
   },

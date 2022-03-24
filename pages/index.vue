@@ -140,7 +140,7 @@ export default {
   methods: {
     async reload() {
       const tf = this.$axios
-        .get('/api/', {
+        .get('/api/tf', {
           headers: { 'X-API-KEY': this.$config.apiKey },
         })
         .then((res) => {

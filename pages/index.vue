@@ -141,7 +141,7 @@ export default {
     async reload() {
       const tf = this.$axios
         .get('/api/tf', {
-          headers: { 'X-API-KEY': this.$config.apiKey },
+          headers: { 'X-Api-Key': this.$config.apiKey },
         })
         .then((res) => {
           this.tf = res.data

@@ -139,6 +139,7 @@ export default {
   },
   methods: {
     async reload() {
+      this.$log.debug(this.$config.apiKey)
       const tf = this.$axios
         .get('/api/tf', {
           headers: { 'X-Api-Key': this.$config.apiKey },

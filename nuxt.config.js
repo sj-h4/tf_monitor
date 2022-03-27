@@ -64,7 +64,7 @@ export default {
   },
 
   publicRuntimeConfig: {
-    apiKey: 'rE0sS5ScMg4hrKDk4YJBO2AUph6w19OZ9fAy0YF5',
+    apiKey: process.env.API_KEY
   },
   privateRuntimeConfig: {
   }

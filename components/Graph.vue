@@ -7,7 +7,7 @@ export default {
   mixins: [reactiveData],
   props: {
     label: {
-      type: Object,
+      type: String,
       default: null,
     },
     numb: {
@@ -43,7 +43,7 @@ export default {
         datasets: [
           {
             lineTension: 0,
-            label: this.label.name,
+            label: this.label,
             backgroundColor: '#f87979',
             data: this.data,
           },

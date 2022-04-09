@@ -40,7 +40,7 @@
           >
             <v-card elevation="2" tile>
               <v-card-text>
-                <div>{{ item[key].label }}</div>
+                <div>{{ item[key].name }}</div>
                 <p class="display-1 text--primary">
                   {{ i }}{{ item[key].unit }}
                 </p>
@@ -52,12 +52,6 @@
       <v-col v-for="(i, key) in item" :key="'B' + key" cols="12" md="4">
         <v-card elevation="2" tile>
           <graph :label="item[key]" :numb="numb[key]" :data="data[key]" />
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="download(key)">
-              <v-icon>mdi-download</v-icon>
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -65,7 +59,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import Graph from '~/components/Graph.vue'
 
 export default {
@@ -78,7 +71,14 @@ export default {
       selected: '50',
       selected2: '',
       numb: [],
-      item: ['airspeed', 'altitude', 'rotation', 'power', 'pitch', 'roll'],
+      item: [
+        { name: 'airspeed', unit: 'm/s' },
+        { name: 'altitude', unit: 'm' },
+        { name: 'rotation', unit: 'rpm' },
+        { name: 'power', unit: 'w' },
+        { name: 'pitch', unit: 'deg' },
+        { name: 'roll', unit: 'deg' },
+      ],
       tf: [],
       data: [],
       real: '',
@@ -107,17 +107,17 @@ export default {
       this.data.push([])
       this.numb.push([])
     }
-    const tf = axios
-      .get('/tf/', {
-        headers: { 'X-API-KEY': this.$config.apiKey },
+    const tf = this.$axios
+      .get('/api/tf', {
+        headers: { 'X-Api-Key': this.$config.apiKey },
       })
       .then((res) => {
         this.tf = res.data
         const t = []
         const ti = []
         this.tf.forEach(function (elem) {
-          t.unshift(elem.tf_name)
-          ti.unshift(elem.created_at)
+          t.push(elem.tf_name)
+          ti.push(elem.created_at)
         })
         this.tf = t
         this.selected2 = this.tf[0]
@@ -139,7 +139,6 @@ export default {
   },
   methods: {
     async reload() {
-      this.$log.debug(this.$config.apiKey)
       const tf = this.$axios
         .get('/api/tf', {
           headers: { 'X-Api-Key': this.$config.apiKey },
@@ -149,7 +148,7 @@ export default {
           this.$log.debug(res)
           const t = []
           this.tf.forEach(function (elem) {
-            t.unshift(elem.tf_name)
+            t.push(elem.tf_name)
           })
           this.tf = t
           this.selected2 = this.tf[0]
@@ -197,53 +196,48 @@ export default {
       }
     },
     async get() {
-      for (const i in this.item) {
-        const dt = axios
-          .get(
-            this.$config.baseURL +
-              this.item[i].name +
-              '&tf=' +
-              this.selected2 +
-              '&top=' +
-              this.selected
-          )
-          .then((res) => {
-            this.data[i] = res.data
-          })
-          .catch((err) => {
-            return err
-          })
-        await dt
-        const l = []
-        const n = []
-        this.data[i].forEach(function (elem) {
-          l.unshift(elem.data)
-          n.unshift(elem.created_at.substr(11, 11))
+      const dt = this.$axios
+        .get('/api/data?tf_name=' + this.selected2, {
+          headers: { 'X-Api-Key': this.$config.apiKey },
         })
-        this.data[i] = l
-        this.numb[i] = n
-      }
+        .then((res) => {
+          const response = res.data
+          this.$log.debug(res)
+          for (const i of this.item) {
+            for (const record of response) {
+              const l = []
+              const n = []
+              l.push(record[i])
+              n.push(record.created_at.substr(11, 11))
+              this.data[i] = l
+              this.numb[i] = n
+            }
+          }
+        })
+        .catch((err) => {
+          this.$log.debug(err)
+          return err
+        })
+      await dt
       this.data.splice()
       this.numb.splice()
     },
     getLatest() {
-      for (const i in this.item) {
-        axios
-          .get(
-            this.$config.baseURL +
-              this.item[i].name +
-              '&tf=' +
-              this.selected2 +
-              '&top=1'
-          )
-          .then((res) => {
-            this.latestData[i] = res.data[0].data
+      this.$axios
+        .get('/api/data?tf_name=' + this.selected2, {
+          headers: { 'X-Api-Key': this.$config.apiKey },
+        })
+        .then((res) => {
+          const response = res.data
+          this.item.forEach((value, index) => {
+            const itemLabel = value.name
+            this.latestData[index] = response[0][itemLabel]
           })
-          .catch((err) => {
-            return err
-          })
-        this.latestData.splice(5)
-      }
+        })
+        .catch((err) => {
+          return err
+        })
+      this.latestData.splice(5)
     },
   },
 }

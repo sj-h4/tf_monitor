@@ -51,7 +51,7 @@
       </v-col>
       <v-col v-for="(i, key) in item" :key="'B' + key" cols="12" md="4">
         <v-card elevation="2" tile>
-          <graph :label="item[key]" :numb="numb[key]" :data="data[key]" />
+          <graph :label="item[key].name" :numb="numb[key]" :data="data[key]" />
         </v-card>
       </v-col>
     </v-row>
@@ -103,10 +103,6 @@ export default {
     },
   },
   async mounted() {
-    for (let x = 0; x < 3; x++) {
-      this.data.push([])
-      this.numb.push([])
-    }
     const tf = this.$axios
       .get('/api/tf', {
         headers: { 'X-Api-Key': this.$config.apiKey },
@@ -202,17 +198,17 @@ export default {
         })
         .then((res) => {
           const response = res.data
-          this.$log.debug(res)
-          for (const i of this.item) {
+          this.item.forEach((value, index) => {
+            const l = []
+            const n = []
             for (const record of response) {
-              const l = []
-              const n = []
-              l.push(record[i])
+              l.push(record[value.name])
               n.push(record.created_at.substr(11, 11))
-              this.data[i] = l
-              this.numb[i] = n
             }
-          }
+            this.data[index] = l
+            this.numb[index] = n
+            this.$log.debug(this.data)
+          })
         })
         .catch((err) => {
           this.$log.debug(err)

@@ -44,8 +44,10 @@ export default {
           {
             lineTension: 0,
             label: this.label,
-            backgroundColor: '#f87979',
+            borderColor: '#f87979',
+            pointBackgroundColor: '#f87979',
             data: this.data,
+            fill: false,
           },
         ],
       }
